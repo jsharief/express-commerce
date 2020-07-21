@@ -1,0 +1,27 @@
+<%- include('includes/head.ejs') %>
+  <body>
+    <%- include('includes/navigation.ejs') %>
+<main>
+    
+ 
+            <form class="register-form" name="register" action="register" id="register" method="POST"> 
+                  <div class="form-control">
+                    <label for="username">Username :</label>
+                    <input type="text" id="username" name="username"/>
+                  </div>
+                  <div class="form-control">
+                    <label for="password">Password :</label>
+                        <input type="password" id="password" name="password"/>
+                  </div>
+                  <div class="form-control">
+                    <label for="confirm-password"> Confirm Password :</label>
+                        <input type="password" id="confirm-passwor" name="confirm-password"/>
+                  </div>
+                  <button type="submit"> Login</button>
+            </form>
+      
+    
+
+</main>
+
+<%- include('includes/end.ejs') %>

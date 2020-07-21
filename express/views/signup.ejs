@@ -1,0 +1,27 @@
+<%- include('includes/head.ejs') %>
+  <body>
+    <%- include('includes/navigation.ejs') %>
+<main>
+     
+            <form class="signup-form" name="singup" action="processSignup" id="singup" method="POST"> 
+                  <div class="form-control">
+                    <label for="username">Username :</label>
+                    <input type="email" id="username" name="username" required=true onblur="validateEmail(this) "/>  <span id="emailMessage" class="emailError"> </span>
+                  </div>
+                  <div class="form-control">
+                    <label for="password">Password :</label>
+                        <input type="password" id="password" name="password" required=true//>
+                  </div>
+
+                  <div class="form-control">
+                    <label for="conform">Conform-Password :</label>
+                        <input type="password" id="conform-password" name="conform-password" required=true onblur="validatePassword(this);"/>
+                        <span id="passwordError" class="passwordError"> </span>
+                  </div>
+                  <button type="submit" id="signup"> Sign up !!</button>
+            </form>
+          
+</main>
+
+<%- include('includes/end.ejs') %>
+<script src="/js/account.js"> </script>
