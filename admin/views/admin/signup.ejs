@@ -1,0 +1,45 @@
+<%- include('../includes/head.ejs') %>
+<link rel="stylesheet" href="/css/forms.css">
+<link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <form class="login-form" action="/agent/create" method="POST">
+            <div class="form-control">
+
+                <label for="username">Admin username</label>
+                <input type="email" name="username" id="username" placeholder="admin@expresscommerce.com" required=true>
+
+            </div>
+
+            <div class="form-control">
+
+                <label for="firstName">First Name</label>
+                <input type="text" name="firstName" id="firstName" placeholder="john" required=true>
+
+            </div>
+
+
+            <div class="form-control">
+
+                <label for="lastName">Last Name</label>
+                <input type="text" name="lastName" id="lastName" placeholder="Doe" required=true>
+
+            </div>
+
+
+            <div class="form-control">
+
+                <label for="passowrd">Admin password</label>
+                <input type="password" name="password" id="password" placeholder="***************" required=true>
+
+            </div>
+
+            <button class="btn" type="submit">Sign up</button>
+        </form>
+    </main>
+
+    <%- include('../includes/end.ejs') %>

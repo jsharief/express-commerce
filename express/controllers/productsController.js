@@ -1,6 +1,7 @@
 const Products = require("../models/product");
+const Product = require("../models/productSchema");
 const fu = require("../util/fileUtil");
-let Order = require('../models/order');
+let Order = require("../models/order");
 exports.getAddProduct = (req, res, next) => {
   res.render("add-product", { addTitle: "Add Product" }); //option-3 using Template
 };
@@ -10,16 +11,23 @@ exports.postAddProduct = (req, res, next) => {
   console.log(`bodys****${req.body.price}`);
   console.log(`bodys****${req.body.description}`);
 
-  product = new Products(req.body.title);
-  product.price = req.body.price;
-  product.description = req.body.description;
-  product.id =
-    (Math.random() * 100).toFixed() +
-    new Date().getSeconds() +
-    new Date().getMilliseconds();
-  product.saveProduct();
-  //  console.log("products ::::" + product);
-  res.redirect("/shop/products");
+  var product = new Product({
+    title: req.body.title,
+    price: req.body.price,
+    description: req.body.description,
+    imgUrl:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQTBIqev_ymdML-Nns1AnHy2VR08j9To4vJlQ&usqp=CAU",
+  });
+
+  product
+    .save()
+    .then((created) => {
+      console.log("producted created through mongoose...");
+      res.redirect("/shop/products");
+    })
+    .catch((err) => {
+      console.error("error while cretating product...", err);
+    });
 };
 
 exports.getProducts = (req, res, next) => {
@@ -30,27 +38,26 @@ exports.getProducts = (req, res, next) => {
         products: biz,
         hasProducts: biz.length > 0,
         path: "/shop/products",
-        isLoggedIn: req.session.isLoggedIn
+        isLoggedIn: req.session.isLoggedIn,
       });
     }
   });
 };
 
 exports.getIndex = (req, res, next) => {
-
   order = new Order();
   if (req.session) {
     req.session.order = order;
   }
 
-   Products.fethAllProducts((biz) => {
+  Products.fethAllProducts((biz) => {
     if (biz) {
       res.render("index", {
         pageTitle: "Shop",
         products: biz,
         hasProducts: biz.length > 0,
         path: "/",
-        isLoggedIn: req.session.isLoggedIn
+        isLoggedIn: req.session.isLoggedIn,
       });
     }
   });
@@ -64,7 +71,7 @@ exports.getCart = (req, res, next) => {
         products: biz,
         hasProducts: biz.length > 0,
         path: "/shop/cart",
-        isLoggedIn: req.session.isLoggedIn
+        isLoggedIn: req.session.isLoggedIn,
       });
   });
 };
@@ -77,7 +84,7 @@ exports.getCheckout = (req, res, next) => {
         products: biz,
         hasProducts: biz.length > 0,
         path: "/shop/checkout",
-        isLoggedIn: req.session.isLoggedIn
+        isLoggedIn: req.session.isLoggedIn,
       });
   });
 };
@@ -90,7 +97,7 @@ exports.getOrders = (req, res, next) => {
         products: biz,
         hasProducts: biz.length > 0,
         path: "/shop/order",
-        isLoggedIn: req.session.isLoggedIn
+        isLoggedIn: req.session.isLoggedIn,
       });
     }
   });
@@ -101,12 +108,11 @@ exports.getProduct = (req, res, next) => {
 
   fu.findProductById(req.params.productId, (prod) => {
     res.render("productDetails", {
-
       pageTitle: `${prod.title}`,
       product: prod,
       hasProducts: prod.length > 0,
       path: "/shop/productDetails",
-      isLoggedIn: req.session.isLoggedIn
+      isLoggedIn: req.session.isLoggedIn,
     });
   });
 };
@@ -119,7 +125,7 @@ exports.addToCart = (req, res, next) => {
       products: prod,
       hasProducts: prod.length > 0,
       path: "/shop/cart",
-      isLoggedIn: req.session.isLoggedIn
+      isLoggedIn: req.session.isLoggedIn,
     });
   });
 };

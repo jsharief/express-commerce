@@ -12,12 +12,15 @@ const productController = require("./controllers/productsController");
 const accountController = require("./controllers/accountController");
 const session = require("express-session");
 const connectMongo = require("./dao/database");
+const mongoose = require("./dao/dataSource");
 var MongoDBStore = require("connect-mongodb-session")(session);
 const userModel = require("./models/user");
 
 const sequelize = require("./util/dataSource");
 
 const nodemon = require("nodemon");
+
+
 
 const app = express();
 const port = 3000;
@@ -28,7 +31,6 @@ app.set("views", "views");
 app.use(bodyParser.urlencoded({ extended: true }));
 //public folder access
 app.use(express.static(staticPath(__dirname, "public")));
-
 
 //app.use("/shop",productRoutes);
 const MONGODB_URI =
@@ -45,7 +47,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: new Date(Date.now() + 3600000 )// 1 week
+      maxAge: new Date(Date.now() + 3600000), // 1 week
     },
     store: store,
   })
@@ -91,7 +93,13 @@ app.get("/", productController.getIndex);
 
 app.use((req, res, next) => {
   let logger = req.session.isLoggedIn;
-  res.status(404).render("404", { pageTitle: "Page Not Found", path: "/" , isLoggedIn: logger });
+  res
+    .status(404)
+    .render("404", {
+      pageTitle: "Page Not Found",
+      path: "/",
+      isLoggedIn: logger,
+    });
 });
 
 //pp.disable('ETag');
@@ -100,11 +108,22 @@ app.use((req, res, next) => {
 
 //console.log(process.env);
 
-connectMongo.mongoConnect((mongoConnection) => {
+/*connectMongo.mongoConnect((mongoConnection) => {
   if (mongoConnection) {
     console.log("Mongo Connected... Server will be started listerning @ 3000");
     app.listen(process.env.PORT);
 
     console.log(`Server started listerning @${process.env.PORT}` );
+  }
+});*/
+
+mongoose.dataSource().then((connected) => {
+  if (connected) {
+    console.log("Mongo Connected... Server will be started listerning @ 3000");
+
+    const port = process.env.PORT || 3000;
+    app.listen(port);
+
+    console.log(`Server started listerning @${port}`);
   }
 });

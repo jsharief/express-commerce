@@ -1,7 +1,8 @@
 const mongodb = require("mongodb");
+
 const MongoClient = mongodb.MongoClient;
 
-let url =
+let url = "mongodb+srv://sharief:Login123$@cluster0.mzumy.mongodb.net/Test?retryWrites=true&w=majority&useUnifiedTopology=true";
   
 let _db;
 const mongoConnect = (callback) => {
