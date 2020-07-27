@@ -10,6 +10,8 @@ router.get("/signup", agentController.getSignUp);
 
 router.post("/create", agentController.handleCreate);
 
+router.post("/create-product",agentController.handleCreateProduct);
+
 router.get("/", agentController.getLogin);
 
 

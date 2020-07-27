@@ -2,6 +2,8 @@ const Products = require("../models/product");
 const Product = require("../models/productSchema");
 const fu = require("../util/fileUtil");
 let Order = require("../models/order");
+const orderManager = require('../manager/orderManager');
+const productHelper = require("../helpers/productHelper");
 exports.getAddProduct = (req, res, next) => {
   res.render("add-product", { addTitle: "Add Product" }); //option-3 using Template
 };
@@ -15,8 +17,7 @@ exports.postAddProduct = (req, res, next) => {
     title: req.body.title,
     price: req.body.price,
     description: req.body.description,
-    imgUrl:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQTBIqev_ymdML-Nns1AnHy2VR08j9To4vJlQ&usqp=CAU",
+    imgUrl: req.body.imgUrl
   });
 
   product
@@ -31,7 +32,7 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Products.fethAllProducts((biz) => {
+  /* Products.fethAllProducts((biz) => {
     if (biz) {
       res.render("shop", {
         pageTitle: "Product Listing",
@@ -41,39 +42,70 @@ exports.getProducts = (req, res, next) => {
         isLoggedIn: req.session.isLoggedIn,
       });
     }
-  });
+  });*/
+
+  productHelper
+    .fetchAllProducts()
+    .then((fetchedProducts) => {
+      res.render("shop", {
+        pageTitle: "Product Listing",
+        products: fetchedProducts,
+        hasProducts: true,
+        path: "/shop/products",
+        isLoggedIn: req.session.isLoggedIn,
+      });
+    })
+    .catch((exception) => {
+      console.error("product fetching exception", exception);
+      next(exception);
+    });
 };
 
 exports.getIndex = (req, res, next) => {
-  order = new Order();
-  if (req.session) {
-    req.session.order = order;
-  }
-
-  Products.fethAllProducts((biz) => {
-    if (biz) {
-      res.render("index", {
-        pageTitle: "Shop",
-        products: biz,
-        hasProducts: biz.length > 0,
-        path: "/",
-        isLoggedIn: req.session.isLoggedIn,
-      });
+  res.render(
+    "index",
+    {
+      pageTitle: "Shop",
+      hasProducts: false,
+      path: "/",
+      isLoggedIn: req.session.isLoggedIn,
+    },
+    (error, html) => {
+      if (html) {
+        if (req.session) {
+          if (!req.session.order) {
+            console.log("session available  no order available...");
+            order = new Order();
+            req.session.order = order;
+          } else {
+            console.log("order session available in order...",req.session);
+          }
+        }
+        res.send(html);
+      }
     }
-  });
+  );
 };
 
 exports.getCart = (req, res, next) => {
-  Products.fethAllProducts((biz) => {
-    if (biz)
+ 
+  orderManager.getShoppingCart(req,res,next,(items)=>{
+
+    if(items) {
+      console.log('items ==> ', items.length);
       res.render("cart", {
         pageTitle: "Your Cart",
-        products: biz,
-        hasProducts: biz.length > 0,
+        cartItems: items,
+        hasItems: items.length > 0,
         path: "/shop/cart",
         isLoggedIn: req.session.isLoggedIn,
       });
+
+    }
+
   });
+
+  
 };
 
 exports.getCheckout = (req, res, next) => {
@@ -105,8 +137,22 @@ exports.getOrders = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   console.log(`Product id : ${req.params.productId}`);
+  productHelper
+    .fetchProductById(req.params.productId)
+    .then((productExist) => {
+      res.render("productDetails", {
+        pageTitle: `${productExist.title}`,
+        product: productExist,
+        hasProducts: true,
+        path: "/shop/productDetails",
+        isLoggedIn: req.session.isLoggedIn,
+      });
+    })
+    .catch((productFindException) => {
+      console.error("product fetch exception ", productFindException);
+    });
 
-  fu.findProductById(req.params.productId, (prod) => {
+  /*fu.findProductById(req.params.productId, (prod) => {
     res.render("productDetails", {
       pageTitle: `${prod.title}`,
       product: prod,
@@ -114,7 +160,7 @@ exports.getProduct = (req, res, next) => {
       path: "/shop/productDetails",
       isLoggedIn: req.session.isLoggedIn,
     });
-  });
+  });*/
 };
 
 exports.addToCart = (req, res, next) => {

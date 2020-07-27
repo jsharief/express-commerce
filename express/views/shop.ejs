@@ -4,8 +4,7 @@
 
 
     <main>
-      <h1>My Products</h1>
-      <p>List of all the products...</p>
+    
       <% if (hasProducts){ %>
 
       <div class="grid">
@@ -15,18 +14,19 @@
            <h1 class="product__title"><%=product.title%></h1>
           </header>
           <div class="card__image">
-            <img src="<%=product.img%>" alt="A Book" width="100" />
+            <img src="<%=product.imageUrl%>" alt="<%=product.title%>"/>
           </div>
           <div class="card__content">
-            <h2 class="product__price">$<%=product.price%>.00</h2>
+            <h2 class="product__price">$<%=product.price%></h2>
             <p class="product__description"><%=product.description%></p>
           </div>
           <div class="card__actions">
             <a href="/shop/products/<%=product.id%>" class="btn">Details </a>
           </div>
           <div class="card__actions">
-            <form name="addToCart" action="addToCart" id="addToCart" method="POST"> 
+            <form name="addToCart" action="/shop/addToCart" id="addToCart" method="POST"> 
               <input type="hidden" name="productId" value="<%=product.id%>" />
+              <input type="hidden" name="price" value="<%=product.price%>" />
               <button class="btn">Add to Cart</button>
             </form>
           </div>

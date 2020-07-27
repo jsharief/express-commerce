@@ -8,7 +8,8 @@ module.exports = class Order {
     }
 
     Items = [] ;
-    totalAmount = 0.00;
-    shippingAmout= 0.00;
+    total = 0.00;
+    shipping= 5.00;
+    tax =0.00;
 
 }

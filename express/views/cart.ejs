@@ -2,6 +2,17 @@
   <body>
     <%- include('includes/navigation.ejs') %>
 <h1> Cart Page .....</h1>
-<%=products.id%>
+  
+<main>
+  <% if (cartItems.length > 0) { %>
+    <div class="grid">
+      <div class="grid">
+        <% for (let item of cartItems) { %>
+           <%=item.qty%>
+        <% } %>
+      <% } %>
+    </div>
+</main>
+
 
 <%- include('includes/end.ejs') %>

@@ -17,6 +17,15 @@ var ProductSchema = new Schema({
      imageUrl : {
         type : String   ,
         required : true
+     },
+     createdAt : {
+        type : Date,
+        required:false,
+        default:Date.now
+     },
+     isActive : {
+         type : Boolean,
+         default:true
      }
   });
 

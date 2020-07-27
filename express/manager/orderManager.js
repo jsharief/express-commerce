@@ -1,24 +1,35 @@
 //const Order = require('../models/order');
+const Product = require("../models/productSchema");
 exports.addToCart = (req, res) => {
-  console.log(" order from add to cart...");
-  const Order = req.session.order;
+  Product.findById(req.body.productId)
+    .then((product) => {
+      const Order = req.session.order;
+      const qty = 1;
+      itemExist = preAddItemToOrder(Order.Items, req.body.productId);
 
-  itemExist = preAddItemToOrder(Order.Items, 11123);
+      if (!itemExist) {
+        var unitPrice = product.price;
+        const total = Number(unitPrice) * Number(qty);
 
-  if (!itemExist) {
-    Order.Items.push({
-      productid: 11123,
-      qty: 1,
-      unitPrice: 18.0,
-      total: 18.0,
+        Order.Items.push({
+          productid: req.body.productId,
+          productRef:product,
+          qty: qty,
+          unitPrice: unitPrice,
+          total: total,
+        });
+      }
+
+      postAddItemToOrder(Order);
+
+      req.session.save();
+
+      })
+    .catch((exp) => {
+      console.error("err", error);
     });
-  }
-  Order.totalAmount = 18.0;
-  Order.tax = 0.0;
-  Order.shipping = 0.0;
 
-  console.log(" order from add to cart...", Order);
-  return Order;
+  //console.log(req.session.order);
 };
 
 const preAddItemToOrder = (items, productId) => {
@@ -33,10 +44,29 @@ const preAddItemToOrder = (items, productId) => {
         item.qty = item.qty + 1;
         item.total = item.qty * item.unitPrice;
       }
-
-      break;
     }
 
     return itemExist;
+  }
+};
+
+const postAddItemToOrder = (order) => {
+  priceOrderTotal(order);
+};
+
+const priceOrderTotal = (order) => {
+  let itemTotal = 0.0;
+  if (order.Items) {
+    for (let item of order.Items) {
+      itemTotal += item.total;
+    }
+    order.total = itemTotal + order.shipping + order.tax;
+  }
+};
+exports.getShoppingCart = (req, res, next, cb) => {
+  if (req.session.order) {
+    cb(req.session.order.Items);
+  } else {
+    cb(new Error("no order in session..."));
   }
 };
