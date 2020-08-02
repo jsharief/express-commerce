@@ -61,8 +61,14 @@ exports.handleCreateProduct = (req, res, next) => {
     title: req.body.title,
     price: req.body.price,
     description: req.body.description,
-    imageUrl:req.body.imageUrl
-      
+    imageUrl:req.body.imageUrl,
+    color : ['red','blue','green'],
+    shipping : {
+              firstName : 'test',
+              lastName : 'tester'
+          
+    }
+     
   });
 
   product

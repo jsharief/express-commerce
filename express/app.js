@@ -20,15 +20,17 @@ const sequelize = require("./util/dataSource");
 
 const nodemon = require("nodemon");
 
-
-
 const app = express();
 const port = 3000;
 
 app.set("view engine", "ejs");
 app.set("views", "views");
 //parse the body ....
-app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(bodyParser.json());
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
 //public folder access
 app.use(express.static(staticPath(__dirname, "public")));
 
@@ -47,7 +49,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: new Date(Date.now() + 3600000), // 1 week
+      maxAge: 3600000, // 1 week
     },
     store: store,
   })
@@ -93,13 +95,11 @@ app.get("/", productController.getIndex);
 
 app.use((req, res, next) => {
   let logger = req.session.isLoggedIn;
-  res
-    .status(404)
-    .render("404", {
-      pageTitle: "Page Not Found",
-      path: "/",
-      isLoggedIn: logger,
-    });
+  res.status(404).render("404", {
+    pageTitle: "Page Not Found",
+    path: "/",
+    isLoggedIn: logger,
+  });
 });
 
 //pp.disable('ETag');
@@ -117,13 +117,21 @@ app.use((req, res, next) => {
   }
 });*/
 
-mongoose.dataSource().then((connected) => {
-  if (connected) {
-    console.log("Mongo Connected... Server will be started listerning @ 3000");
+mongoose
+  .dataSource()
+  .then((connected) => {
+    if (connected) {
+      console.log(
+        "Mongo Connected... Server will be started listerning @ 3000"
+      );
 
-    const port = process.env.PORT || 3000;
-    app.listen(port);
+      const port = process.env.PORT || 3000;
+      app.listen(port);
 
-    console.log(`Server started listerning @${port}`);
-  }
-});
+      console.log(`Server started listerning @${port}`);
+    }
+  })
+  .catch((connectionExcepton) => {
+    console.error("exception connecting mong", connectionExcepton);
+    //next(connectionExcepton);
+  });

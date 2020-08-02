@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const  Schema = mongoose.Schema;
+const ShippingSchema = require('./testSchmea');
+
 
 var ProductSchema = new Schema({
      title : {
@@ -26,7 +28,18 @@ var ProductSchema = new Schema({
      isActive : {
          type : Boolean,
          default:true
+     },
+
+     color : {
+        type : Array
+        
+     } ,
+
+     shipping : {
+         type : ShippingSchema
      }
+     
+
   });
 
 

@@ -1,38 +1,11 @@
 //const Order = require('../models/order');
 const Product = require("../models/productSchema");
+const Order = require("../models/orderSchema");
 exports.addToCart = (req, res) => {
-  Product.findById(req.body.productId)
-    .then((product) => {
-      const Order = req.session.order;
-      const qty = 1;
-      itemExist = preAddItemToOrder(Order.Items, req.body.productId);
-
-      if (!itemExist) {
-        var unitPrice = product.price;
-        const total = Number(unitPrice) * Number(qty);
-
-        Order.Items.push({
-          productid: req.body.productId,
-          productRef:product,
-          qty: qty,
-          unitPrice: unitPrice,
-          total: total,
-        });
-      }
-
-      postAddItemToOrder(Order);
-
-      req.session.save();
-
-      })
-    .catch((exp) => {
-      console.error("err", error);
-    });
-
-  //console.log(req.session.order);
+  return Product.findById(req.body.productId);
 };
 
-const preAddItemToOrder = (items, productId) => {
+exports.preAddItemToOrder = (items, productId) => {
   if (items.length > 0) {
     let itemExist = false;
     for (let item of items) {
@@ -50,23 +23,65 @@ const preAddItemToOrder = (items, productId) => {
   }
 };
 
-const postAddItemToOrder = (order) => {
+exports.postAddItemToOrder = (order) => {
   priceOrderTotal(order);
 };
 
-const priceOrderTotal = (order) => {
+priceOrderTotal = (order) => {
   let itemTotal = 0.0;
   if (order.Items) {
     for (let item of order.Items) {
+      item.total = item.qty * item.unitPrice;
       itemTotal += item.total;
+      console.log("ItemTotal...." + itemTotal);
     }
-    order.total = itemTotal + order.shipping + order.tax;
+    order.itemTotal = Number(itemTotal);
+    order.total =
+      Number(itemTotal) + Number(order.shipping) + Number(order.tax);
   }
 };
 exports.getShoppingCart = (req, res, next, cb) => {
   if (req.session.order) {
-    cb(req.session.order.Items);
+    cb(req.session.order);
   } else {
     cb(new Error("no order in session..."));
   }
 };
+
+exports.calcuateShipping = (req, res, next) => {
+  if (req.session.order) {
+    var order = req.session.order;
+    let shippingMethod = req.params.method;
+    if (shippingMethod === "ground") {
+      order.shipping = 5;
+      order.shipppingGroup.method = "ground";
+      priceOrderTotal(order);
+    } else if (shippingMethod === "2Day") {
+      order.shipping = 20;
+      order.shipppingGroup.method = "2Day";
+      priceOrderTotal(order);
+    } else if (shippingMethod === "Nday") {
+      order.shipping = 30;
+      order.shipppingGroup.method = "Nday";
+      priceOrderTotal(order);
+    }
+  }
+};
+
+exports.getProductMap = (order, cb) => {
+  cb(order.Items.map((p) => {
+    return {
+      name: p.productRef.title,
+      description: p.productRef.description,
+      amount: p.unitPrice * 100,
+      currency: "usd",
+      quantity: p.qty,
+    };
+  }));
+};
+
+exports.commitOrder = (order)=>{
+   order.state = 'SUBMITTED';
+   var mongooseOrder = new Order(order);
+   return mongooseOrder.save();
+}

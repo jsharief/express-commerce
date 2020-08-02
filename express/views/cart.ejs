@@ -1,18 +1,81 @@
 <%- include('includes/head.ejs') %>
   <body>
     <%- include('includes/navigation.ejs') %>
-<h1> Cart Page .....</h1>
+ 
   
-<main>
-  <% if (cartItems.length > 0) { %>
-    <div class="grid">
-      <div class="grid">
-        <% for (let item of cartItems) { %>
-           <%=item.qty%>
-        <% } %>
-      <% } %>
-    </div>
+<main id="cart">
+  <% if (hasItems) { %>
+ 
+      <table>
+        <th>Item</th>
+        <th>Quantity</th>
+        <th>Unit Price</th>
+        <th>Item Amount</th>
+      <% cartItems.forEach(item => { %>
+          
+            <tr class="cart__item">
+              <td><%= item.productRef.title %></td>
+              <td><%= item.qty %></td>
+              <td><%= item.unitPrice%></td>
+              <td><%= item.total%>.00</td>
+              
+              
+               <td>  <button class="btn danger" type="btn" onclick="deleteItem('<%= item.productRef._id %>')" >Delete</button> </td>
+              </tr>
+      <% }) %>
+    </table>
+   
+  <hr>
+
+      <table align="center" > 
+
+        <tr>
+          <td>Item Amount</td> <td><%=order.itemTotal%>.00</td>
+     </tr>  
+          <tr>
+             <td>Shipping</td> <td><%=order.shipping%>.00</td>
+          </tr>   
+
+        <tr>
+             <td>Tax</td> <td><%=order.tax%>.00</td>
+        </tr>     
+
+      <tr>
+             <td>Order Total</td> <td><%=order.total%>.00</td>
+       </tr>   
+      </table>
+
+      <br><br>
+  
+      <legend>Shipping </legend> 
+        <div >
+          
+          <input onchange="calculateShipping(this)" type="radio" name="method" value="ground" id="ground" <%=ground%>/>
+          <label for="ground">Ground - Free</label> 
+        </div>
+
+        <div >
+            <input onchange="calculateShipping(this)" type="radio" name="method" id="2Day"  value="2Day" <%=day2%>/>
+            <label for="2Day">2 Day Shipping - $20.00</label> 
+        </div>
+
+
+       <div >
+        <input onchange="calculateShipping(this)" type="radio" name="method" id="Nday"  value="Nday" <%=nday%>/>
+        <label for="Nday">Next Day Shipping - $30.00</label> 
+     </div>
+
+  <div class="centered">
+      <form action="/shop/checkout" method="GET">
+          <button type="submit" class="btn">Checkout</button>
+      </form>
+  </div>
+  
+<% } else { %>
+  <h1>No Products in Cart!</h1>
+  <% } %>
 </main>
 
 
 <%- include('includes/end.ejs') %>
+ 

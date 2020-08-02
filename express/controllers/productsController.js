@@ -2,7 +2,7 @@ const Products = require("../models/product");
 const Product = require("../models/productSchema");
 const fu = require("../util/fileUtil");
 let Order = require("../models/order");
-const orderManager = require('../manager/orderManager');
+const orderManager = require("../manager/orderManager");
 const productHelper = require("../helpers/productHelper");
 exports.getAddProduct = (req, res, next) => {
   res.render("add-product", { addTitle: "Add Product" }); //option-3 using Template
@@ -17,7 +17,7 @@ exports.postAddProduct = (req, res, next) => {
     title: req.body.title,
     price: req.body.price,
     description: req.body.description,
-    imgUrl: req.body.imgUrl
+    imgUrl: req.body.imgUrl,
   });
 
   product
@@ -78,7 +78,7 @@ exports.getIndex = (req, res, next) => {
             order = new Order();
             req.session.order = order;
           } else {
-            console.log("order session available in order...",req.session);
+            console.log("order session available in order...", req.session);
           }
         }
         res.send(html);
@@ -88,24 +88,35 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
- 
-  orderManager.getShoppingCart(req,res,next,(items)=>{
+  orderManager.getShoppingCart(req, res, next, (order) => {
+    if (order) {
+      var ground;
+      var day2;
+      var nday;
 
-    if(items) {
-      console.log('items ==> ', items.length);
+       if(order.shipppingGroup.method === 'ground') {
+         ground = 'checked';
+       }else if(order.shipppingGroup.method === '2Day'){
+          day2 = 'checked';
+       }else if(order.shipppingGroup.method === 'Nday'){
+          nday = 'checked';
+       }
+      console.log("items ==> ", order);
+      console.log("items ==> ", order.Items.length);
+
       res.render("cart", {
         pageTitle: "Your Cart",
-        cartItems: items,
-        hasItems: items.length > 0,
+        cartItems: order.Items,
+        hasItems: order.Items.length > 0,
+        order: order,
         path: "/shop/cart",
         isLoggedIn: req.session.isLoggedIn,
+        ground:ground,
+        day2:day2,
+        nday:nday,
       });
-
     }
-
   });
-
-  
 };
 
 exports.getCheckout = (req, res, next) => {

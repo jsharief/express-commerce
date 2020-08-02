@@ -24,11 +24,14 @@
             <a href="/shop/products/<%=product.id%>" class="btn">Details </a>
           </div>
           <div class="card__actions">
-            <form name="addToCart" action="/shop/addToCart" id="addToCart" method="POST"> 
-              <input type="hidden" name="productId" value="<%=product.id%>" />
-              <input type="hidden" name="price" value="<%=product.price%>" />
-              <button class="btn">Add to Cart</button>
-            </form>
+             
+             
+
+              <input type="hidden" name="productId" id="productId" value="<%=product.id%>" />
+              
+              <button class="btn" onclick="addItem('<%=product.id%>')">Add to Cart</button>
+            
+              <span id="<%=product.id%>" class="item_message"> </span>
           </div>
         </article>
         <% }%>
@@ -38,3 +41,4 @@
       <% } %>
     </main>
     <%- include('includes/end.ejs') %>
+  

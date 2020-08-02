@@ -1,0 +1,51 @@
+<%- include('includes/head.ejs') %>
+
+<body>
+  <%- include('includes/navigation.ejs') %>
+
+  <main>
+            Your order is confirmed......  <%=order._id%>
+
+
+            <table>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Item Amount</th>
+              <% order.Items.forEach(item => { %>
+                  
+                    <tr class="cart__item">
+                      <td><%= item.productRef.title %></td>
+                      <td><%= item.qty %></td>
+                      <td><%= item.unitPrice%></td>
+                      <td><%= item.total%>.00</td>
+                      
+                      
+                       </tr>
+              <% }) %>
+            </table>
+           
+          <hr>
+        
+              <table align="center" > 
+        
+                <tr>
+                  <td>Item Amount</td> <td><%=order.itemTotal%>.00</td>
+             </tr>  
+                  <tr>
+                     <td>Shipping</td> <td><%=order.shipping%>.00</td>
+                  </tr>   
+        
+                <tr>
+                     <td>Tax</td> <td><%=order.tax%>.00</td>
+                </tr>     
+        
+              <tr>
+                     <td>Order Total</td> <td><%=order.total%>.00</td>
+               </tr>   
+              </table>
+
+  </main>
+
+  <%- include('includes/end.ejs') %>
+</body>
