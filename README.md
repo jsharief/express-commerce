@@ -1,2 +1,2 @@
-# express-commerce
+# express-shop
 eCommerce application using node JS
