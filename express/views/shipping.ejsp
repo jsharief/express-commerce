@@ -1,0 +1,151 @@
+<%- include('includes/head.ejs') %>
+
+<body>
+  <%- include('includes/navigation.ejs') %>
+
+  <main>
+    <form action="/shop/payment" id="shippingForm" method="POST">
+      <legend>Shipping</legend>
+      <div>
+        <label for="firstName">First Name</label>
+        <input
+          type="text"
+          name="firstName"
+          id="firstName"
+          placeholder="John"
+          required="true"
+        />
+      </div>
+      <div>
+        <label for="lastName">Last Name</label>
+        <input
+          type="text"
+          name="lastName"
+          id="lastName"
+          placeholder="Doe"
+          required="true"
+        />
+      </div>
+
+      <div>
+        <label for="line1">Address Line1</label>
+        <input
+          type="text"
+          name="addressLine1"
+          id="addressLine1"
+          placeholder=""
+          required="true"
+        />
+      </div>
+      <div>
+        <label for="line2">Address Line2</label>
+        <input
+          type="text"
+          name="addressLine2"
+          id="addressLine2"
+          placeholder=""
+        />
+      </div>
+      <div>
+        <label for="city">City</label>
+        <input
+          type="text"
+          name="city"
+          id="city"
+          placeholder=""
+          required="true"
+        />
+      </div>
+      <div>
+        <label for="state">State</label>
+        <input
+          type="text"
+          name="state"
+          id="state"
+          placeholder=""
+          required="true"
+        />
+      </div>
+
+      <div>
+        <label for="zipCode">zipcode</label>
+        <input
+          type="zipCode"
+          name="zipcode"
+          id="zipcode"
+          placeholder=""
+          required="true"
+        />
+      </div>
+
+      <div>
+        <label for="Country">Country</label>
+        <select id="country" name="country">
+          <option value="USA">United States</option>
+          <option value="IND">India</option>
+          <option value="CAN">Canada</option>
+        </select>
+      </div>
+
+      <div>
+        <input
+          type="checkbox"
+          id="sameAsShipping"
+          name="sameAsShipping"
+          aria-checked="true"
+          checked
+        />
+        <label for="Country">is shipping Same as Billing</label>
+      </div>
+
+      <hr />
+
+      <button id="order-btn" class="btn">order</button>
+    </form>
+
+    <section>
+      <table align="center">
+        <tr>
+          <td>Item Amount</td>
+          <td><%=order.itemTotal%>.00</td>
+        </tr>
+        <tr>
+          <td>Shipping</td>
+          <td><%=order.shipping%>.00</td>
+        </tr>
+
+        <tr>
+          <td>Tax</td>
+          <td><%=order.tax%>.00</td>
+        </tr>
+
+        <tr>
+          <td>Order Total</td>
+          <td><%=order.total%>.00</td>
+        </tr>
+      </table>
+    </section>
+
+    <div class="centered">
+      <script src="https://js.stripe.com/v3/"></script>
+      <script>
+        var stripe = Stripe(
+          "pk_test_51HA5hEFn9ku0qcLPHMKrOSsc5LPrlSOGDhkaFUcbwxFOi19hPKH4phj1uMrWZZ8Tx3p23RPauYcGpb1MkL8Q75gj00N0XCXdLw"
+        );
+
+        var orderBtn = document.getElementById("order-btn");
+        var shippingForm = document.getElementById("shippingForm");
+
+        orderBtn.addEventListener("click", function () {
+          if (shippingForm[0].reportValidity()) {
+            stripe.redirectToCheckout({
+              sessionId: "<%= sessionId %>",
+            });
+          }
+        });
+      </script>
+    </div>
+  </main>
+
+  <%- include('includes/end.ejs') %>
+</body>

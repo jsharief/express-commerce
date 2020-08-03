@@ -1,0 +1,10 @@
+<%- include('includes/head.ejs') %>
+
+  <body>
+    <%- include('includes/navigation.ejs') %>
+
+
+    <main>
+            Tabby's  Book Shop 
+    </main>
+    <%- include('includes/end.ejs') %>
