@@ -10,6 +10,7 @@ const accountRoutes = require("./routes/account");
 const productRoutes = require("./routes/productDetail");
 const productController = require("./controllers/productsController");
 const accountController = require("./controllers/accountController");
+const cartController = require("./controllers/cartController");
 const session = require("express-session");
 const connectMongo = require("./dao/database");
 const mongoose = require("./dao/dataSource");
@@ -32,7 +33,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 //public folder access
-app.use(express.static(staticPath(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
+
 
 //app.use("/shop",productRoutes);
 const MONGODB_URI =
@@ -62,6 +64,8 @@ app.use("/shop", shopRoutes);
 app.use("/account", accountRoutes);
 
 app.get("/", productController.getIndex);
+
+app.get("/onPageLoad",cartController.handlePageLoad);
 
 // To handle invalid request
 /*app.use((req, res, next) => {

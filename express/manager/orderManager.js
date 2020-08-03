@@ -65,6 +65,7 @@ exports.calcuateShipping = (req, res, next) => {
       order.shipppingGroup.method = "Nday";
       priceOrderTotal(order);
     }
+  return order;
   }
 };
 
@@ -84,4 +85,26 @@ exports.commitOrder = (order)=>{
    order.state = 'SUBMITTED';
    var mongooseOrder = new Order(order);
    return mongooseOrder.save();
+}
+
+exports.getAddToCartResponse = (order)=>{
+  console.log(order);
+   var items = order.Items;
+   if (items) {
+    var cart = {};
+    var quantity = 0; 
+    items.map(p => {
+      quantity += p.qty;
+    });
+    cart.qty = quantity;
+    cart.total = order.itemTotal;
+   }
+  
+   return cart;
+}
+
+exports.addShippingGroupToOrer = (order,shippingGroup)=>{
+
+  console.log(shippingGroup);
+
 }

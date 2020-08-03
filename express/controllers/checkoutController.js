@@ -6,8 +6,8 @@ const stripe = require("stripe")(
 );
 
 exports.handleCalculateShipping = (req, res, next) => {
-  orderManager.calcuateShipping(req, res, next);
-  res.status(200).json({ message: "success" });
+  var order = orderManager.calcuateShipping(req, res, next);
+  res.status(200).json(order);
 };
 
 exports.handleStripePayment = (req, res, next) => {
@@ -68,13 +68,20 @@ exports.handlePaymentSuccess = (req, res, next) => {
   }
 };
 
-exports.handleConfirmOrder = (req,res,next) => {
-  var orderSaved = req.session.lastOrder ;
-  console.log(orderSaved +"save order..." + orderSaved._id);
-  res.render("confirm",{
-    pageTitle: 'confirmOrder',
+exports.handleConfirmOrder = (req, res, next) => {
+  var orderSaved = req.session.lastOrder;
+  console.log(orderSaved + "save order..." + orderSaved._id);
+  res.render("confirm", {
+    pageTitle: "confirmOrder",
     order: orderSaved,
-    path: '/checkout/confirm',
-    isLoggedIn: req.session.isLoggedIn
-  })
-}
+    path: "/checkout/confirm",
+    isLoggedIn: req.session.isLoggedIn,
+  });
+};
+
+
+exports.handleMoveToPayMent=(req,res,next)=>{
+
+  
+
+};
